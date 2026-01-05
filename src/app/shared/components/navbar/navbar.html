@@ -7,15 +7,23 @@
       <ul
         tabindex="-1"
         class="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
-        <li><a>Home</a></li>
-        <li><a>Houses</a></li>
-        <li><a>Markers</a></li>
-        <li><a>Full Screen</a></li>
+
+        @for (route of routes; track route.path) {
+          <li>
+            <a [routerLink]="route.path">
+              {{ route.title }}
+            </a>
+          </li>
+        }
+
       </ul>
     </div>
   </div>
   <div class="navbar-center">
-    <a class="btn btn-ghost text-xl">Maps App</a>
+    <!-- <a class="btn btn-ghost text-xl">Maps App</a> -->
+    <a class="btn btn-ghost text-xl">
+      {{ pageTitle$ | async }}
+    </a>
   </div>
   <div class="navbar-end">
     <button class="btn btn-ghost btn-circle">
