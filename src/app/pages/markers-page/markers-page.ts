@@ -1,8 +1,14 @@
 import { AfterViewInit, Component, ElementRef, signal, viewChild } from '@angular/core';
-import mapboxgl from 'mapbox-gl'; // or "const mapboxgl = require('mapbox-gl');"
+import mapboxgl, { MapboxGeoJSONFeature } from 'mapbox-gl'; // or "const mapboxgl = require('mapbox-gl');"
 import { environment } from '../../../environments/environment';
+import { v4 as UUIDv4 } from 'uuid'
 
 mapboxgl.accessToken = environment.mapboxKey;
+
+interface Marker {
+  id: string;
+  mapboxMarker: mapboxgl.Marker
+}
 
 @Component({
   selector: 'app-markers-page',
@@ -12,6 +18,7 @@ mapboxgl.accessToken = environment.mapboxKey;
 export class MarkersPageComponet implements AfterViewInit {
   divElement = viewChild<ElementRef>('map');
   map = signal<mapboxgl.Map | null>(null);
+  markers = signal<Marker[]>([]);
 
   ngAfterViewInit() {
     if( !this.divElement()?.nativeElement ) return;
@@ -27,22 +34,39 @@ export class MarkersPageComponet implements AfterViewInit {
         zoom: 14, // starting zoom
     });
 
-    const marker = new mapboxgl.Marker({
-      draggable: false,
-      color: '#fbb400'
-    })
-      .setLngLat([ -100.32329088532266, 25.685353505115582 ])
-      .addTo(map);
-
-    marker.on('dragend', (event) => {
-      console.log(event)
-    })
-
     this.mapListeners(map);
   }
 
   mapListeners( map: mapboxgl.Map ) {
-    console.log(map);
+    map.on('click', (event) => this.mapClick(event) );
+
+    this.map.set(map);
+  }
+
+  mapClick(event: mapboxgl.MapMouseEvent) {
+
+    if(!this.map()) return;
+    const map = this.map()!;
+
+    const coords = event.lngLat;
+    const color = '#xxxxxx'.replace(/x/g, (y) =>
+      ((Math.random() * 16) | 0).toString(16)
+    );
+
+    const mapboxMarker = new mapboxgl.Marker({
+      color: color
+    })
+      .setLngLat(coords)
+      .addTo(map);
+
+    const newMarker: Marker = {
+      id: UUIDv4(),
+      mapboxMarker: mapboxMarker
+    }
+
+    // this.markers.set([ newMarker, ...this.markers() ])
+    this.markers.update((markers) => [ newMarker, ...markers]);
+    console.log(this.markers())
   }
 
 }
