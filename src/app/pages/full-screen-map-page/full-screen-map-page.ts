@@ -35,8 +35,8 @@ export class FullScreenMapPageComponent implements AfterViewInit {
 
   zoom = signal(14);
   coordinates = signal({
-    lng: -74.5,
-    lat: 40
+    lng: -100.32329088532266,
+    lat: 25.685353505115582
   })
 
   zoomEffect = effect(() => {
