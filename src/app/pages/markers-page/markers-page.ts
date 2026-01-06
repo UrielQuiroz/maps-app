@@ -67,7 +67,6 @@ export class MarkersPageComponet implements AfterViewInit {
 
     // this.markers.set([ newMarker, ...this.markers() ])
     this.markers.update((markers) => [ newMarker, ...markers]);
-    console.log(this.markers())
   }
 
   flyToMarker(lngLat: LngLatLike) {
